@@ -17,7 +17,30 @@ type RequestsResult = {
 }
 
 async function fetchAll(urls: string[]): Promise<RequestsResult[]> {
-    //Your code goes here
+    type RequestsResult = {
+        data: any,
+        status: number
+    };
+
+    async function fetchAll(urls: string[]): Promise<RequestsResult[]> {
+        const fetchPromises = urls.map((url) =>
+            fetch(url)
+                .then(async (response) => ({
+                    data: await response.json(),
+                    status: response.status,
+                }))
+                .catch((error) => ({
+                    data: { error: error.message },
+                    status: 500,
+                }))
+        );
+
+        const results = await Promise.all(fetchPromises);
+        return results;
+    }
+
+    module.exports = { fetchAll };
+
     return [];
 }
 
